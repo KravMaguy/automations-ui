@@ -1,23 +1,19 @@
-let recording = false;
-let actions = [];
+// Listen for when a tab is created
+chrome.tabs.onCreated.addListener((tab) => {
+  console.log("Tab created:", tab);
+});
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.action === "startRecording") {
-    recording = true;
-    actions = []; // Clear previous actions
-  } else if (request.action === "stopRecording") {
-    recording = false;
-    chrome.storage.local.set({ actions: actions }, function () {
-      console.log("Actions saved");
-    });
-  } else if (request.action === "reproduceActions") {
-    chrome.storage.local.get("actions", function (data) {
-      chrome.tabs.create({ url: "about:blank" }, function (tab) {
-        chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          files: ["reproducer.js"],
-        });
-      });
-    });
-  }
+// Listen for when a tab is updated
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  console.log(`Tab ${tabId} updated:`, changeInfo);
+});
+
+// Listen for web navigation
+chrome.webNavigation.onCompleted.addListener((details) => {
+  console.log(
+    "Navigation completed for tab:",
+    details.tabId,
+    "URL:",
+    details.url
+  );
 });
