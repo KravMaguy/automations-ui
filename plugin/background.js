@@ -1,4 +1,7 @@
 // Listen for when a tab is created
+console.log("background.js//runningjkhljhljkh");
+console.log("servide worker");
+console.log("updated...");
 chrome.tabs.onCreated.addListener((tab) => {
   console.log("Tab created:", tab);
 });
