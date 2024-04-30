@@ -9,10 +9,8 @@ function handleInputChange(event) {
     `${input.name || input.id || "unnamed"}`,
     `${input.value}`,
   ]);
-  if (formInputActions.length > 5) {
-    console.log("greater than 5");
+  if (formInputActions.length > 15) {
     const jsonData = JSON.stringify(formInputActions);
-    console.log(jsonData);
     chrome.runtime.sendMessage({ action: "download", data: jsonData });
   }
 }
