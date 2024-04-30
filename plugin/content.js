@@ -1,25 +1,20 @@
-// const formInputActions = [];
-
+const formInputActions = [];
+console.log("updated new");
 function handleInputChange(event) {
   const input = event.target;
   console.log(
     `Input changed: ${input.name || input.id || "unnamed"} = ${input.value}`
   );
-  // formInputActions.push([
-  //   `${input.name || input.id || "unnamed"}`,
-  //   `${input.value}`,
-  // ]);
-  // if (formInputActions.length > 20) {
-  //   console.log("reached");
-  //   const jsonData = JSON.stringify(formInputActions);
-  //   console.log(jsonData);
-  // let blob = new Blob([jsonData], { type: "application/json" });
-  // chrome.downloads.download({
-  //   url: URL.createObjectURL(blob),
-  //   filename: "formInputActions.json",
-  //   saveAs: true,
-  // });
-  // }
+  formInputActions.push([
+    `${input.name || input.id || "unnamed"}`,
+    `${input.value}`,
+  ]);
+  if (formInputActions.length > 5) {
+    console.log("greater than 5");
+    const jsonData = JSON.stringify(formInputActions);
+    console.log(jsonData);
+    chrome.runtime.sendMessage({ action: "download", data: jsonData });
+  }
 }
 
 function attachEventListenersToInputs(inputElement) {
