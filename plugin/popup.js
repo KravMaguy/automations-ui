@@ -1,4 +1,3 @@
-console.log("popup js.....asdfasdfasdfdssasgdfgfegdfgsdf");
 document.addEventListener("DOMContentLoaded", function () {
   console.log("dom content loaded");
   const recordButton = document.getElementById("recordButton");
@@ -12,6 +11,11 @@ document.addEventListener("DOMContentLoaded", function () {
         isRecording: isRecording,
       });
     });
+    if (!isRecording) {
+      recordButton.innerHTML = "Start Recording";
+    } else {
+      recordButton.innerHTML = "Stop Recording";
+    }
     console.log("Recording toggled:", isRecording);
   });
 });

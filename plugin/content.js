@@ -1,5 +1,5 @@
 const formInputActions = [];
-console.log("content5.5");
+console.log("5/5");
 function handleInputChange(event) {
   const input = event.target;
   console.log(
@@ -10,6 +10,7 @@ function handleInputChange(event) {
     `${input.value}`,
   ]);
   if (formInputActions.length > 15) {
+    console.log("greater than 15");
     const jsonData = JSON.stringify(formInputActions);
     // chrome.runtime.sendMessage({ action: "download", data: jsonData });
     chrome.runtime.sendMessage({ action: "upload", data: jsonData });

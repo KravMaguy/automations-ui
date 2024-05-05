@@ -1,7 +1,4 @@
 // Listen for when a tab is created
-console.log("background.js//runningjkhljhljkh");
-console.log("servide worker");
-console.log("updated...3");
 chrome.tabs.onCreated.addListener((tab) => {
   console.log("Tab created:", tab);
 });
@@ -42,7 +39,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ status: "error", message: "Failed to send data" });
       });
 
-    return true; // Keep the sendResponse callback valid for asynchronous response
+    return true; // Keep the sendResponse callback valid
   }
 });
 
