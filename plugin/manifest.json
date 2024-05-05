@@ -5,6 +5,9 @@
   "description": "Logs and automates user actions on web pages.",
   "permissions": ["tabs", "storage", "webNavigation", "downloads"],
   "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html"
+  },
   "background": {
     "service_worker": "background.js"
   },

@@ -16,6 +16,13 @@ function handleInputChange(event) {
   }
 }
 
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.action === "toggleRecording") {
+    isRecording = request.isRecording; // Update recording state based on message
+    console.log("Content script recording state:", isRecording);
+  }
+});
+
 function attachEventListenersToInputs(inputElement) {
   inputElement.addEventListener("input", handleInputChange);
 }
