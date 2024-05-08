@@ -5,9 +5,7 @@ app = Flask(__name__)
 @app.route('/upload', methods=['POST'])
 def upload_data():
     data = request.json 
-    parsed_array = json.loads(data)
-    print(data)
-    for item in parsed_array:
+    for item in data:
         print(item, ' item')
     return jsonify(status="success", message="Data received")
 
