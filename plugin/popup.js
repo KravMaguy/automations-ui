@@ -17,5 +17,12 @@ document.addEventListener("DOMContentLoaded", function () {
       recordButton.innerHTML = "Stop Recording";
     }
     console.log("Recording toggled:", isRecording);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        action: "toggleRecording",
+        isRecording: isRecording,
+      });
+    });
   });
 });
