@@ -42,18 +42,3 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true; // Keep the sendResponse callback valid
   }
 });
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "download") {
-    const jsonData = request.data;
-    console.log({ jsonData });
-    const blob = new Blob([jsonData], { type: "application/json" });
-    console.log({ blob });
-    // const url = chrome.runtime.getURL("formInputActions.json");
-    // chrome.downloads.download({
-    //   url: url,
-    //   filename: "formInputActions.json",
-    //   saveAs: true,
-    // });
-  }
-});
