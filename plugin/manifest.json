@@ -1,12 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Action Logger and Automator",
+  "name": "React Todo Extension",
   "version": "1.0",
-  "description": "Logs and automates user actions on web pages.",
-  "permissions": ["tabs", "storage", "webNavigation", "downloads"],
-  "host_permissions": ["<all_urls>"],
+  "description": "Chrome extension with React popup and additional route",
+  "permissions": ["tabs", "storage"],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "public/popup.html"
   },
   "background": {
     "service_worker": "background.js"
@@ -14,8 +13,13 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_end"
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["dist/todos.bundle.js"],
+      "matches": ["<all_urls>"]
     }
   ]
 }

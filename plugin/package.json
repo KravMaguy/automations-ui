@@ -1,16 +1,31 @@
 {
-  "name": "automations",
+  "name": "react-todo-extension",
   "version": "1.0.0",
-  "description": "",
+  "description": "Chrome extension with React popup and additional route",
   "main": "background.js",
-  "devDependencies": {
-    "@eslint/js": "^9.1.1",
-    "eslint": "^9.1.1",
-    "globals": "^15.1.0"
-  },
   "scripts": {
+    "build": "webpack",
+    "start": "webpack serve --open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/preset-react": "^7.14.5",
+    "@eslint/js": "^8.1.0",
+    "babel-loader": "^8.2.2",
+    "eslint": "^8.1.0",
+    "globals": "^13.12.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
 }
