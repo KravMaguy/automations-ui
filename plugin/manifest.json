@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "React Todo Extension",
+  "name": "automations",
   "version": "1.0",
-  "description": "Chrome extension with React popup and additional route",
+  "description": "web automations",
   "permissions": ["tabs", "storage"],
   "action": {
     "default_popup": "public/popup.html"
