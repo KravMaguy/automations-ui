@@ -3,7 +3,6 @@ const path = require("path");
 module.exports = {
   entry: {
     popup: "./src/popup/index.js",
-    todos: "./src/todos/index.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"),

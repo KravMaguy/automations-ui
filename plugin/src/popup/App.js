@@ -8,10 +8,21 @@ function App() {
     setTodos([...todos, inputValue]);
     setInputValue("");
   };
+  const handleRecordClick = () => {
+    // Check if chrome API is available
+    if (window.chrome && window.chrome.runtime) {
+      // Send a message to the background script
+      window.chrome.runtime.sendMessage({ action: "record" }, (response) => {
+        console.log(response);
+      });
+    }
+  };
 
   return (
     <div>
-      <h1>Todo List hret</h1>
+      <h1>Todo List sfsfsdfsdf</h1>
+      <button onClick={handleRecordClick}>Record</button>
+
       <input
         type='text'
         value={inputValue}

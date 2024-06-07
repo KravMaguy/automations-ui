@@ -3,7 +3,8 @@
   "name": "automations",
   "version": "1.0",
   "description": "web automations",
-  "permissions": ["tabs", "storage"],
+  "permissions": ["tabs", "storage", "webNavigation", "downloads"],
+  "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "public/popup.html"
   },
@@ -18,7 +19,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["dist/todos.bundle.js"],
+      "resources": ["dist/popup.bundle.js"],
       "matches": ["<all_urls>"]
     }
   ]

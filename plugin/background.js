@@ -42,3 +42,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true; // Keep the sendResponse callback valid
   }
 });
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "record") {
+    console.log("Recording...");
+    // Perform your recording actions here
+    sendResponse({ status: "Recording started" });
+  }
+});
