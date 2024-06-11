@@ -1,10 +1,11 @@
 {
-  "name": "react-todo-extension",
+  "name": "web-automations",
   "version": "1.0.0",
-  "description": "Chrome extension with React popup and additional route",
+  "description": "web automations",
   "main": "background.js",
   "scripts": {
     "build": "webpack",
+    "watch": "webpack --watch",
     "start": "webpack serve --open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

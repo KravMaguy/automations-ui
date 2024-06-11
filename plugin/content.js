@@ -1,21 +1,16 @@
 let isRecording = false;
 const formInputActions = [];
-console.log("Content script loaded");
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "toggleRecording") {
     isRecording = request.isRecording;
-    console.log("**1");
-    console.log("Content script recording state:", isRecording);
   } else if (request.action === "uploadData") {
-    console.log("**2");
     chrome.runtime.sendMessage({ action: "upload", data: formInputActions });
     formInputActions.length = 0; // Clear the array after sending
   }
 });
 
 function handleInputChange(event) {
-  console.log("handleinput");
-  console.log(isRecording);
+  console.log({ isRecording });
   if (!isRecording) return; // Only log inputs if recording is active
 
   const input = event.target;
