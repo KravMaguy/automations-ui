@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 
 function App() {
+  console.log("app.js");
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [recording, setIsRecording] = useState(false);
 
   const addTodo = () => {
     setTodos([...todos, inputValue]);
@@ -10,10 +12,15 @@ function App() {
   };
   const handleRecordClick = () => {
     // Check if chrome API is available
+    console.log("handle recording click");
+    setIsRecording(!recording);
+    console.log({ recording });
     if (window.chrome && window.chrome.runtime) {
-      // Send a message to the background script
-      window.chrome.runtime.sendMessage({ action: "record" }, (response) => {
-        console.log(response);
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "toggleRecording",
+          isRecording: recording,
+        });
       });
     }
   };
