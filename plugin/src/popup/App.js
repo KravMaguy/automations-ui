@@ -12,21 +12,24 @@ function App() {
   const handleRecordClick = () => {
     setIsRecording(!recording);
     console.log({ recording });
-    // Check if chrome API is available
     if (window.chrome && window.chrome.runtime) {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: "toggleRecording",
-          isRecording: recording,
-        });
+        if (tabs[0].status === "complete") {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            action: "toggleRecording",
+            isRecording: recording,
+          });
+        }
       });
     }
   };
 
   return (
     <div>
-      <h1>Todo List</h1>
-      <button onClick={handleRecordClick}>Record</button>
+      <h1>Todo List #12</h1>
+      <button onClick={handleRecordClick}>
+        {recording ? "Record" : "Stop Record"}
+      </button>
 
       <input
         type='text'
