@@ -12,8 +12,21 @@ function Popup() {
     });
   };
 
+  // const openDashboard = () => {
+  //   chrome.tabs.create({ url: chrome.runtime.getURL("public/dashboard.html") });
+  // };
   const openDashboard = () => {
-    chrome.tabs.create({ url: chrome.runtime.getURL("public/dashboard.html") });
+    const url = chrome.runtime.getURL("public/dashboard.html");
+
+    chrome.tabs.query({}, function (tabs) {
+      const tab = tabs.find((tab) => tab.url === url);
+      if (tab) {
+        chrome.tabs.update(tab.id, { active: true });
+        chrome.windows.update(tab.windowId, { focused: true });
+      } else {
+        chrome.tabs.create({ url: url });
+      }
+    });
   };
 
   return (
