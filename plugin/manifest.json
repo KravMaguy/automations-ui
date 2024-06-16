@@ -20,7 +20,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["dist/popup.bundle.js"],
+      "resources": ["dist/popup.bundle.js", "dist/dashboard.bundle.js"],
       "matches": ["<all_urls>"]
     }
   ]

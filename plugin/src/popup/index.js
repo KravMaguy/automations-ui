@@ -1,5 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import Popup from "./Popup"; // Import the Popup component
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<Popup />, document.getElementById("root"));

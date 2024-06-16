@@ -3,6 +3,7 @@ const path = require("path");
 module.exports = {
   entry: {
     popup: "./src/popup/index.js",
+    dashboard: "./src/dashboard/index.js", // New entry point for the dashboard
   },
   output: {
     path: path.resolve(__dirname, "dist"),
