@@ -3,7 +3,7 @@
   "name": "automations",
   "version": "1.0",
   "description": "web automations",
-  "permissions": ["tabs", "storage", "webNavigation", "downloads"],
+  "permissions": ["tabs", "storage", "webNavigation", "downloads", "scripting"],
   "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "public/popup.html"
@@ -15,7 +15,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
-      "run_at": "document_start"
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [

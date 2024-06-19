@@ -1,17 +1,35 @@
+console.log("Contkyoiuyoiu&&&&&");
+
 let isRecording = false;
 const formInputActions = [];
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.action === "toggleRecording") {
-    isRecording = request.isRecording;
-  } else if (request.action === "uploadData") {
-    chrome.runtime.sendMessage({ action: "upload", data: formInputActions });
-    formInputActions.length = 0; // Clear the array after sending
+  console.log("Content script received message:", request);
+
+  if (request.action === "startRecording") {
+    isRecording = true;
+    formInputActions.length = 0;
+    chrome.runtime.sendMessage({ action: "startRecording" });
+    console.log("Recording started");
+    sendResponse({ status: "ok" });
+  } else if (request.action === "stopRecording") {
+    isRecording = false;
+    chrome.runtime.sendMessage({ action: "stopRecording" });
+    chrome.runtime.sendMessage({
+      action: "saveRecording",
+      data: formInputActions,
+    });
+    console.log("Recording stopped");
+    sendResponse({ status: "ok" });
   }
+
+  return true; // Indicates that the response is sent asynchronously
 });
 
 function handleInputChange(event) {
+  console.log("handleInputChange");
   console.log({ isRecording });
-  if (!isRecording) return; // Only log inputs if recording is active
+  if (!isRecording) return;
 
   const input = event.target;
   console.log(

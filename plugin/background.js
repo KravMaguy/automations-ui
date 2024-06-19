@@ -1,11 +1,49 @@
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.action.onClicked.addListener((tab) => {
-    chrome.tabs.create({ url: chrome.runtime.getURL("public/dashboard.html") });
+  console.log("Extension installed");
+  chrome.tabs.query({}, (tabs) => {
+    for (let tab of tabs) {
+      if (!tab.url.startsWith("chrome://")) {
+        chrome.scripting.executeScript(
+          {
+            target: { tabId: tab.id },
+            files: ["content.js"],
+          },
+          () => {
+            if (chrome.runtime.lastError) {
+              console.error(
+                `Error injecting script into tab ${tab.id}:`,
+                chrome.runtime.lastError.message
+              );
+            } else {
+              console.log(`Injected content script into tab ${tab.id}`);
+            }
+          }
+        );
+      }
+    }
   });
 });
 
 chrome.tabs.onCreated.addListener((tab) => {
   console.log("Tab created:", tab);
+  if (!tab.url.startsWith("chrome://")) {
+    chrome.scripting.executeScript(
+      {
+        target: { tabId: tab.id },
+        files: ["content.js"],
+      },
+      () => {
+        if (chrome.runtime.lastError) {
+          console.error(
+            `Error injecting script into new tab ${tab.id}:`,
+            chrome.runtime.lastError.message
+          );
+        } else {
+          console.log(`Injected content script into new tab ${tab.id}`);
+        }
+      }
+    );
+  }
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -21,13 +59,22 @@ chrome.webNavigation.onCompleted.addListener((details) => {
   );
 });
 
+function setRecordingIcon() {
+  chrome.action.setIcon({ path: "icons/icon-recording.png" });
+}
+
+function setDefaultIcon() {
+  chrome.action.setIcon({ path: "icons/icon-default.png" });
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "toggleRecording") {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        action: "toggleRecording",
-        isRecording: request.isRecording,
-      });
-    });
+  console.log("background onMess");
+  console.log("req ac: ", request);
+  if (request.action === "startRecording") {
+    chrome.storage.local.set({ isRecording: true });
+    // setRecordingIcon();
+  } else if (request.action === "stopRecording") {
+    chrome.storage.local.set({ isRecording: false });
+    // setDefaultIcon();
   }
 });

@@ -1,20 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function Popup() {
   const [isRecording, setIsRecording] = useState(false);
 
-  const handleRecordClick = () => {
-    const newRecordingState = !isRecording;
-    setIsRecording(newRecordingState);
-    chrome.runtime.sendMessage({
-      action: "toggleRecording",
-      isRecording: newRecordingState,
+  useEffect(() => {
+    chrome.storage.local.get("isRecording", (data) => {
+      setIsRecording(data.isRecording || false);
     });
+  }, []);
+
+  const handleStopRecording = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "stopRecording" });
+    });
+    setIsRecording(false);
+    chrome.storage.local.set({ isRecording: false });
   };
 
-  // const openDashboard = () => {
-  //   chrome.tabs.create({ url: chrome.runtime.getURL("public/dashboard.html") });
-  // };
   const openDashboard = () => {
     const url = chrome.runtime.getURL("public/dashboard.html");
 
@@ -31,9 +33,9 @@ function Popup() {
 
   return (
     <div>
-      <button onClick={handleRecordClick}>
-        {isRecording ? "Stop" : "Record"}
-      </button>
+      {isRecording && (
+        <button onClick={handleStopRecording}>Stop Recording</button>
+      )}
       <button onClick={openDashboard}>Open Dashboard</button>
     </div>
   );
