@@ -3,9 +3,10 @@ import React, { useState } from "react";
 function App() {
   const [automations, setAutomations] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
 
   const addAutomation = () => {
-    setAutomations([...automations, { name: inputValue, status: null }]);
+    setAutomations([...automations, { name: inputValue, status: "Url" }]);
     setInputValue("");
   };
 
@@ -67,6 +68,14 @@ function App() {
     });
   };
 
+  const handlePopupClick = () => {
+    setShowPopup(true);
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false);
+  };
+
   return (
     <div>
       <h1>Automations</h1>
@@ -82,6 +91,7 @@ function App() {
             <th>Name</th>
             <th>Status</th>
             <th>Action</th>
+            <th>Start Url</th>
           </tr>
         </thead>
         <tbody>
@@ -90,17 +100,48 @@ function App() {
               <td>{automation.name}</td>
               <td>{automation.status}</td>
               <td>
-                <button
-                  onClick={() => handleRecordClick(index)}
-                  disabled={automation.status === "Recording"}
-                >
-                  Record
-                </button>
+                {automation.url ? (
+                  <button
+                    onClick={() => handleRecordClick(index)}
+                    disabled={automation.status === "Recording"}
+                  >
+                    Record
+                  </button>
+                ) : (
+                  ""
+                )}
+              </td>
+              <td>
+                {automation.url ? (
+                  automation.url
+                ) : (
+                  <button onClick={() => setShowPopup(true)}>+</button>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {showPopup && (
+        <div
+          className='popup'
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <input type='text' placeholder='Automation Url' />
+          <button onClick={handlePopupClose}>Close</button>
+        </div>
+      )}
     </div>
   );
 }
