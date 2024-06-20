@@ -3,10 +3,9 @@ import React, { useState } from "react";
 function App() {
   const [automations, setAutomations] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
 
   const addAutomation = () => {
-    setAutomations([...automations, { name: inputValue, status: "Url" }]);
+    setAutomations([...automations, { name: inputValue, status: null }]);
     setInputValue("");
   };
 
@@ -31,6 +30,7 @@ function App() {
               automationName: automationToRecord.name,
             },
             (response) => {
+              console.log("is response called?");
               if (chrome.runtime.lastError) {
                 console.error(
                   "Error starting recording:",
@@ -39,6 +39,7 @@ function App() {
                 alert(
                   `Failed to start recording: ${chrome.runtime.lastError.message}`
                 );
+                console.log("im in here..");
                 setAutomations((prevState) => {
                   console.log("Automations before update:", prevState);
 
@@ -49,8 +50,12 @@ function App() {
                   return newState;
                 });
               } else if (response && response.status === "ok") {
+                //your good
+                console.log("gtg houston");
                 console.log("Recording started successfully in the new tab");
               } else {
+                //something else unexpected
+                console.log("2");
                 console.error("Unexpected response:", response);
                 alert("Unexpected response from content script");
                 setAutomations((prevState) =>
@@ -68,14 +73,6 @@ function App() {
     });
   };
 
-  const handlePopupClick = () => {
-    setShowPopup(true);
-  };
-
-  const handlePopupClose = () => {
-    setShowPopup(false);
-  };
-
   return (
     <div>
       <h1>Automations</h1>
@@ -91,7 +88,6 @@ function App() {
             <th>Name</th>
             <th>Status</th>
             <th>Action</th>
-            <th>Start Url</th>
           </tr>
         </thead>
         <tbody>
@@ -100,48 +96,17 @@ function App() {
               <td>{automation.name}</td>
               <td>{automation.status}</td>
               <td>
-                {automation.url ? (
-                  <button
-                    onClick={() => handleRecordClick(index)}
-                    disabled={automation.status === "Recording"}
-                  >
-                    Record
-                  </button>
-                ) : (
-                  ""
-                )}
-              </td>
-              <td>
-                {automation.url ? (
-                  automation.url
-                ) : (
-                  <button onClick={() => setShowPopup(true)}>+</button>
-                )}
+                <button
+                  onClick={() => handleRecordClick(index)}
+                  disabled={automation.status === "Recording"}
+                >
+                  Record
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      {showPopup && (
-        <div
-          className='popup'
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-        >
-          <input type='text' placeholder='Automation Url' />
-          <button onClick={handlePopupClose}>Close</button>
-        </div>
-      )}
     </div>
   );
 }
