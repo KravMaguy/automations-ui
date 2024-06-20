@@ -11,12 +11,6 @@ function App() {
 
   const handleRecordClick = (index) => {
     const automationToRecord = automations[index];
-    console.log({ automations });
-    const updatedAutomations = automations.map((automation, i) =>
-      i === index ? { ...automation, status: "Recording" } : automation
-    );
-
-    setAutomations(updatedAutomations);
 
     chrome.tabs.create({ url: "https://www.google.com" }, (newTab) => {
       const listener = (tabId, changeInfo, tab) => {
@@ -30,7 +24,6 @@ function App() {
               automationName: automationToRecord.name,
             },
             (response) => {
-              console.log("is response called?");
               if (chrome.runtime.lastError) {
                 console.error(
                   "Error starting recording:",
@@ -39,30 +32,18 @@ function App() {
                 alert(
                   `Failed to start recording: ${chrome.runtime.lastError.message}`
                 );
-                console.log("im in here..");
-                setAutomations((prevState) => {
-                  console.log("Automations before update:", prevState);
-
-                  const newState = prevState.map((automation, i) =>
-                    i === index ? { ...automation, status: null } : automation
-                  );
-                  console.log("Automations after update:", newState);
-                  return newState;
-                });
               } else if (response && response.status === "ok") {
-                //your good
-                console.log("gtg houston");
-                console.log("Recording started successfully in the new tab");
-              } else {
-                //something else unexpected
-                console.log("2");
-                console.error("Unexpected response:", response);
-                alert("Unexpected response from content script");
                 setAutomations((prevState) =>
                   prevState.map((automation, i) =>
-                    i === index ? { ...automation, status: null } : automation
+                    i === index
+                      ? { ...automation, status: "Recording" }
+                      : automation
                   )
                 );
+                console.log("Recording started successfully in the new tab");
+              } else {
+                console.error("Unexpected response:", response);
+                alert("Unexpected response from content script");
               }
             }
           );
