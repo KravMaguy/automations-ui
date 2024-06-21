@@ -1,12 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function App() {
   const [automations, setAutomations] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
+  useEffect(() => {
+    // Load the automations from storage
+    chrome.storage.local.get("automations", (data) => {
+      if (data.automations) {
+        setAutomations(data.automations);
+      }
+    });
+
+    // Listen for updates to the automations in storage
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area === "local" && changes.automations) {
+        setAutomations(changes.automations.newValue);
+      }
+    });
+  }, []);
+
   const addAutomation = () => {
-    setAutomations([...automations, { name: inputValue, status: null }]);
+    const newAutomations = [...automations, { name: inputValue, status: null }];
+    setAutomations(newAutomations);
     setInputValue("");
+    chrome.storage.local.set({ automations: newAutomations });
   };
 
   const handleRecordClick = (index) => {
@@ -33,13 +51,13 @@ function App() {
                   `Failed to start recording: ${chrome.runtime.lastError.message}`
                 );
               } else if (response && response.status === "ok") {
-                setAutomations((prevState) =>
-                  prevState.map((automation, i) =>
-                    i === index
-                      ? { ...automation, status: "Recording" }
-                      : automation
-                  )
+                const updatedAutomations = automations.map((automation, i) =>
+                  i === index
+                    ? { ...automation, status: "Recording" }
+                    : automation
                 );
+                setAutomations(updatedAutomations);
+                chrome.storage.local.set({ automations: updatedAutomations });
                 console.log("Recording started successfully in the new tab");
               } else {
                 console.error("Unexpected response:", response);

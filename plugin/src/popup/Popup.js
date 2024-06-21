@@ -11,10 +11,27 @@ function Popup() {
 
   const handleStopRecording = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, { action: "stopRecording" });
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        { action: "stopRecording" },
+        (response) => {
+          if (response && response.status === "ok") {
+            setIsRecording(false);
+            chrome.storage.local.set({ isRecording: false });
+            chrome.storage.local.get("automations", (data) => {
+              if (data.automations) {
+                const updatedAutomations = data.automations.map((automation) =>
+                  automation.status === "Recording"
+                    ? { ...automation, status: null }
+                    : automation
+                );
+                chrome.storage.local.set({ automations: updatedAutomations });
+              }
+            });
+          }
+        }
+      );
     });
-    setIsRecording(false);
-    chrome.storage.local.set({ isRecording: false });
   };
 
   const openDashboard = () => {
