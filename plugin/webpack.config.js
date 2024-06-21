@@ -1,6 +1,7 @@
 const path = require("path");
 
 module.exports = {
+  mode: "development",
   entry: {
     popup: "./src/popup/index.js",
     dashboard: "./src/dashboard/index.js", // New entry point for the dashboard
