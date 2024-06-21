@@ -24,28 +24,6 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-chrome.tabs.onCreated.addListener((tab) => {
-  console.log("Tab created:", tab);
-  if (!tab.url.startsWith("chrome://")) {
-    chrome.scripting.executeScript(
-      {
-        target: { tabId: tab.id },
-        files: ["content.js"],
-      },
-      () => {
-        if (chrome.runtime.lastError) {
-          console.error(
-            `Error injecting script into new tab ${tab.id}:`,
-            chrome.runtime.lastError.message
-          );
-        } else {
-          console.log(`Injected content script into new tab ${tab.id}`);
-        }
-      }
-    );
-  }
-});
-
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   console.log(`Tab ${tabId} updated:`, changeInfo);
 });
