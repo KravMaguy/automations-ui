@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 function App() {
   const [automations, setAutomations] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [urlValue, setUrlValue] = useState("");
 
   useEffect(() => {
     // Load the automations from storage
@@ -21,17 +22,22 @@ function App() {
   }, []);
 
   const addAutomation = () => {
-    const newAutomations = [...automations, { name: inputValue, status: null }];
+    const newAutomations = [
+      ...automations,
+      { name: inputValue, url: urlValue, status: null },
+    ];
     setAutomations(newAutomations);
     setInputValue("");
+    setUrlValue("");
     chrome.storage.local.set({ automations: newAutomations });
   };
 
   const handleRecordClick = (index) => {
     const automationToRecord = automations[index];
 
-    chrome.tabs.create({ url: "https://www.google.com" }, (newTab) => {
+    chrome.tabs.create({ url: automationToRecord.url }, (newTab) => {
       const listener = (tabId, changeInfo, tab) => {
+        console.log({ tab });
         if (tabId === newTab.id && changeInfo.status === "complete") {
           chrome.tabs.onUpdated.removeListener(listener);
 
@@ -79,12 +85,20 @@ function App() {
         type='text'
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
+        placeholder='Automation Name'
+      />
+      <input
+        type='text'
+        value={urlValue}
+        onChange={(e) => setUrlValue(e.target.value)}
+        placeholder='URL'
       />
       <button onClick={addAutomation}>Add Automation</button>
       <table>
         <thead>
           <tr>
             <th>Name</th>
+            <th>URL</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -93,6 +107,7 @@ function App() {
           {automations.map((automation, index) => (
             <tr key={index}>
               <td>{automation.name}</td>
+              <td>{automation.url}</td>
               <td>{automation.status}</td>
               <td>
                 <button
