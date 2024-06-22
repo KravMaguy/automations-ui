@@ -4,11 +4,8 @@ let isRecording = false;
 const formInputActions = [];
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log("Content script received message:", request);
-
   if (request.action === "startRecording") {
     isRecording = true;
-    formInputActions.length = 0;
     chrome.runtime.sendMessage({ action: "startRecording" });
     console.log("Recording started");
     sendResponse({ status: "ok" });
@@ -22,15 +19,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     console.log("Recording stopped");
     sendResponse({ status: "ok" });
   }
-
-  return true; // Indicates that the response is sent asynchronously
+  return true;
 });
 
 function handleInputChange(event) {
-  console.log("handleInputChange");
-  console.log({ isRecording });
   if (!isRecording) return;
-
   const input = event.target;
   console.log(
     `Input changed: ${input.name || input.id || "unnamed"} = ${input.value}`
