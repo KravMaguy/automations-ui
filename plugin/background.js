@@ -12,8 +12,6 @@ chrome.webNavigation.onCompleted.addListener((details) => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("background onMess");
-  console.log("req ac: ", request);
   if (request.action === "startRecording") {
     chrome.storage.local.set({ isRecording: true });
   } else if (request.action === "stopRecording") {
@@ -28,7 +26,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       if (result.isRecording) {
         chrome.tabs.sendMessage(tabId, { action: "restoreRecording" });
       }
-      console.log("Value currently is " + result.isRecording);
     });
   }
 });

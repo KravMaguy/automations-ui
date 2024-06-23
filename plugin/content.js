@@ -4,8 +4,6 @@ let formInputActions = [];
 chrome.storage.local.get(["formInputActions", "isRecording"], (result) => {
   formInputActions = result.formInputActions || [];
   isRecording = result.isRecording || false;
-  console.log("Restored formInputActions:", formInputActions);
-  console.log("Restored isRecording:", isRecording);
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -13,7 +11,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     isRecording = true;
     chrome.storage.local.set({ isRecording });
     chrome.runtime.sendMessage({ action: "startRecording" });
-    console.log("Recording started");
     sendResponse({ status: "ok" });
   } else if (request.action === "stopRecording") {
     isRecording = false;
@@ -23,21 +20,16 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         action: "saveRecording",
         data: formInputActions,
       });
-      console.log("Recording stopped");
       sendResponse({ status: "ok" });
     });
-    return true; // Indicate that the response will be sent asynchronously
+    return true; // response will be sent asynchronously
   } else if (request.action === "restoreRecording") {
     isRecording = true;
     chrome.storage.local.get("formInputActions", (result) => {
       formInputActions = result.formInputActions || [];
-      console.log(
-        "Restored formInputActions after restoreRecording:",
-        formInputActions
-      );
       sendResponse({ status: "ok" });
     });
-    return true; // Indicate that the response will be sent asynchronously
+    return true; // response will be sent asynchronously
   }
 });
 
