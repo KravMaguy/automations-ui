@@ -22,15 +22,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       });
       sendResponse({ status: "ok" });
     });
-    return true; // response will be sent asynchronously
   } else if (request.action === "restoreRecording") {
     isRecording = true;
     chrome.storage.local.get("formInputActions", (result) => {
       formInputActions = result.formInputActions || [];
       sendResponse({ status: "ok" });
     });
-    return true; // response will be sent asynchronously
   }
+  return true; // response will be sent asynchronously
+  //e.g. setter and getter actions on chrome.storagelocal is like interacting with a database
 });
 
 function handleInputChange(event) {
