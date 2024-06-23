@@ -20,3 +20,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.storage.local.set({ isRecording: false });
   }
 });
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === "complete") {
+    // When a tab is updated, restore the recording state from storage
+    chrome.storage.local.get(["isRecording"], function (result) {
+      if (result.isRecording) {
+        chrome.tabs.sendMessage(tabId, { action: "restoreRecording" });
+      }
+      console.log("Value currently is " + result.isRecording);
+    });
+  }
+});
