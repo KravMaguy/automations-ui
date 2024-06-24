@@ -32,6 +32,11 @@ function App() {
     chrome.storage.local.set({ automations: newAutomations });
   };
 
+  const removeAutomation = (index) => {
+    const filteredAnimation = automations.filter((_, i) => i !== index);
+    setAutomations(filteredAnimation);
+  };
+
   const handleRecordClick = (index) => {
     const automationToRecord = automations[index];
 
@@ -115,6 +120,14 @@ function App() {
                   disabled={automation.status === "Recording"}
                 >
                   Record
+                </button>
+              </td>
+              <td>
+                <button
+                  onClick={() => removeAutomation(index)}
+                  disabled={false}
+                >
+                  -
                 </button>
               </td>
             </tr>

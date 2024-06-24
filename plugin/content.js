@@ -1,12 +1,15 @@
-let isRecording = false;
-let formInputActions = [];
+const automationStatusActions = {
+  isRecording: false,
+  formInputActions: [],
+};
 
 chrome.storage.local.get(["formInputActions", "isRecording"], (result) => {
-  formInputActions = result.formInputActions || [];
-  isRecording = result.isRecording || false;
+  automationStatusActions.formInputActions = result.formInputActions || [];
+  automationStatusActions.isRecording = result.isRecording || false;
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  let { isRecording, formInputActions } = automationStatusActions;
   if (request.action === "startRecording") {
     isRecording = true;
     chrome.storage.local.set({ isRecording });
@@ -34,6 +37,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 function handleInputChange(event) {
+  let { isRecording, formInputActions } = automationStatusActions;
   if (!isRecording) return;
   const input = event.target;
   console.log(
