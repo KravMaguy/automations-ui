@@ -33,8 +33,15 @@ function App() {
   };
 
   const removeAutomation = (index) => {
+    if (automations[index].status === "Recording") {
+      alert(
+        "Cannot remove an automation during recording, stop recording to delete the automation"
+      );
+      return;
+    }
     const filteredAnimation = automations.filter((_, i) => i !== index);
     setAutomations(filteredAnimation);
+    chrome.storage.local.set({ automations: filteredAnimation });
   };
 
   const handleRecordClick = (index) => {
