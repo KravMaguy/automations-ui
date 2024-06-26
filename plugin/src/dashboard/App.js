@@ -22,6 +22,18 @@ function App() {
   }, []);
 
   const addAutomation = () => {
+    if (!inputValue || !urlValue) {
+      alert("Please enter a name and URL for the automation");
+      return;
+    }
+
+    try {
+      new URL(urlValue);
+    } catch (_) {
+      alert("Invalid URL. Please enter a valid URL.");
+      return;
+    }
+
     const newAutomations = [
       ...automations,
       { name: inputValue, url: urlValue, status: null },
@@ -46,7 +58,6 @@ function App() {
 
   const handleRecordClick = (index) => {
     const automationToRecord = automations[index];
-
     chrome.tabs.create({ url: automationToRecord.url }, (newTab) => {
       const listener = (tabId, changeInfo, tab) => {
         console.log({ tab });
