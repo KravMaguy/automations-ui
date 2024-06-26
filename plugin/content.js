@@ -1,15 +1,12 @@
-const automationStatusActions = {
-  isRecording: false,
-  formInputActions: [],
-};
+let isRecording = false;
+let formInputActions = [];
 
 chrome.storage.local.get(["formInputActions", "isRecording"], (result) => {
-  automationStatusActions.formInputActions = result.formInputActions || [];
-  automationStatusActions.isRecording = result.isRecording || false;
+  formInputActions = result.formInputActions || [];
+  isRecording = result.isRecording || false;
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  let { isRecording, formInputActions } = automationStatusActions;
   if (request.action === "startRecording") {
     isRecording = true;
     chrome.storage.local.set({ isRecording });
@@ -37,7 +34,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 function handleInputChange(event) {
-  let { isRecording, formInputActions } = automationStatusActions;
   if (!isRecording) return;
   const input = event.target;
   console.log(
@@ -49,11 +45,9 @@ function handleInputChange(event) {
   ]);
   chrome.storage.local.set({ formInputActions }); // Save to storage
 }
-
 function attachEventListenersToInputs(inputElement) {
   inputElement.addEventListener("input", handleInputChange);
 }
-
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     mutation.addedNodes.forEach((node) => {
@@ -68,12 +62,10 @@ const observer = new MutationObserver((mutations) => {
     });
   });
 });
-
 observer.observe(document, {
   childList: true,
   subtree: true,
 });
-
 document
   .querySelectorAll("input, textarea, select")
   .forEach(attachEventListenersToInputs);

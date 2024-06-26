@@ -21,6 +21,7 @@ function App() {
     });
   }, []);
 
+  console.log("adding..");
   const addAutomation = () => {
     if (!inputValue || !urlValue) {
       alert("Please enter a name and URL for the automation");
@@ -42,6 +43,19 @@ function App() {
     setInputValue("");
     setUrlValue("");
     chrome.storage.local.set({ automations: newAutomations });
+    //print out everything in chrome storage local
+  };
+  const printStateStorage = () => {
+    chrome.storage.local.get(null, function (items) {
+      console.log(items);
+    });
+  };
+
+  const clearStorage = () => {
+    chrome.storage.local.set({}, function () {});
+    setInputValue("");
+    setUrlValue("");
+    setAutomations([]);
   };
 
   const removeAutomation = (index) => {
@@ -60,7 +74,13 @@ function App() {
     const automationToRecord = automations[index];
     chrome.tabs.create({ url: automationToRecord.url }, (newTab) => {
       const listener = (tabId, changeInfo, tab) => {
+        console.log("111111111");
+
+        console.log({ newTab });
+        console.log({ tabId });
+        console.log({ changeInfo });
         console.log({ tab });
+        console.log("$$$$$$$$$$");
         if (tabId === newTab.id && changeInfo.status === "complete") {
           chrome.tabs.onUpdated.removeListener(listener);
 
@@ -82,7 +102,7 @@ function App() {
               } else if (response && response.status === "ok") {
                 const updatedAutomations = automations.map((automation, i) =>
                   i === index
-                    ? { ...automation, status: "Recording" }
+                    ? { ...automation, status: "Recording", tabId }
                     : automation
                 );
                 setAutomations(updatedAutomations);
@@ -117,6 +137,9 @@ function App() {
         placeholder='URL'
       />
       <button onClick={addAutomation}>Add Automation</button>
+      <button onClick={printStateStorage}>Print State</button>
+      {/* add clearstorage button */}
+      <button onClick={clearStorage}>Clear Storage</button>
       <table>
         <thead>
           <tr>
