@@ -80,6 +80,13 @@ function App() {
   };
 
   const handleRecordClick = (index) => {
+    chrome.storage.local.get("isRecording", (data) => {
+      if (data.isRecording) {
+        alert("Another automation is currently being recorded");
+        return;
+      }
+    });
+
     const automationToRecord = automations[index];
     chrome.tabs.create({ url: automationToRecord.url }, (newTab) => {
       const listener = (tabId, changeInfo, tab) => {
