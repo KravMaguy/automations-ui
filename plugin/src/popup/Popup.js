@@ -11,6 +11,7 @@ function Popup() {
 
   const handleStopRecording = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      console.log(5);
       chrome.tabs.sendMessage(
         tabs[0].id,
         { action: "stopRecording" },

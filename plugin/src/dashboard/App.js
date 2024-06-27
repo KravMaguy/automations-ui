@@ -93,7 +93,7 @@ function App() {
             console.log({ tab });
             if (tabId === newTab.id && changeInfo.status === "complete") {
               chrome.tabs.onUpdated.removeListener(listener);
-
+              console.log(4);
               chrome.tabs.sendMessage(
                 newTab.id,
                 {

@@ -10,11 +10,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "startRecording") {
     isRecording = true;
     chrome.storage.local.set({ isRecording });
+    console.log(2);
     chrome.runtime.sendMessage({ action: "startRecording" });
     sendResponse({ status: "ok" });
   } else if (request.action === "stopRecording") {
     isRecording = false;
     chrome.storage.local.set({ isRecording }, () => {
+      console.log(3);
       chrome.runtime.sendMessage({ action: "stopRecording" });
       chrome.runtime.sendMessage({
         action: "saveRecording",
@@ -23,11 +25,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       sendResponse({ status: "ok" });
     });
   } else if (request.action === "restoreRecording") {
-    isRecording = true;
-    chrome.storage.local.get("formInputActions", (result) => {
-      formInputActions = result.formInputActions || [];
-      sendResponse({ status: "ok" });
-    });
+    // isRecording = true;
+    // chrome.storage.local.get("formInputActions", (result) => {
+    //   formInputActions = result.formInputActions || [];
+    //   sendResponse({ status: "ok" });
+    // });
   }
   return true; // response will be sent asynchronously
   //e.g. setter and getter actions on chrome.storagelocal is like interacting with a database
