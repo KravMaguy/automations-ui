@@ -52,14 +52,16 @@ function App() {
   };
 
   const clearStorage = () => {
-    console.log("clearing storage sdfsd");
-    printStateStorage();
     chrome.storage.local.remove(
       ["automations", "formInputActions", "isRecording"],
       function () {
         var error = chrome.runtime.lastError;
         if (error) {
           console.error(error);
+        } else {
+          //clear input fields
+          setInputValue("");
+          setUrlValue("");
         }
       }
     );
