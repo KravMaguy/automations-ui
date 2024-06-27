@@ -83,56 +83,58 @@ function App() {
     chrome.storage.local.get("isRecording", (data) => {
       if (data.isRecording) {
         alert("Another automation is currently being recorded");
-        return;
-      }
-    });
+      } else {
+        const automationToRecord = automations[index];
+        chrome.tabs.create({ url: automationToRecord.url }, (newTab) => {
+          const listener = (tabId, changeInfo, tab) => {
+            console.log({ newTab });
+            console.log({ tabId });
+            console.log({ changeInfo });
+            console.log({ tab });
+            if (tabId === newTab.id && changeInfo.status === "complete") {
+              chrome.tabs.onUpdated.removeListener(listener);
 
-    const automationToRecord = automations[index];
-    chrome.tabs.create({ url: automationToRecord.url }, (newTab) => {
-      const listener = (tabId, changeInfo, tab) => {
-        console.log({ newTab });
-        console.log({ tabId });
-        console.log({ changeInfo });
-        console.log({ tab });
-        if (tabId === newTab.id && changeInfo.status === "complete") {
-          chrome.tabs.onUpdated.removeListener(listener);
-
-          chrome.tabs.sendMessage(
-            newTab.id,
-            {
-              action: "startRecording",
-              automationName: automationToRecord.name,
-            },
-            (response) => {
-              if (chrome.runtime.lastError) {
-                console.error(
-                  "Error starting recording:",
-                  chrome.runtime.lastError
-                );
-                alert(
-                  `Failed to start recording: ${chrome.runtime.lastError.message}`
-                );
-              } else if (response && response.status === "ok") {
-                const updatedAutomations = automations.map((automation, i) =>
-                  i === index
-                    ? { ...automation, status: "Recording", tabId }
-                    : automation
-                );
-                setAutomations(updatedAutomations);
-                chrome.storage.local.set({ automations: updatedAutomations });
-                console.log(
-                  `Recording started successfully in the new tab ${tabId}`
-                );
-              } else {
-                console.error("Unexpected response:", response);
-                alert("Unexpected response from content script");
-              }
+              chrome.tabs.sendMessage(
+                newTab.id,
+                {
+                  action: "startRecording",
+                  automationName: automationToRecord.name,
+                },
+                (response) => {
+                  if (chrome.runtime.lastError) {
+                    console.error(
+                      "Error starting recording:",
+                      chrome.runtime.lastError
+                    );
+                    alert(
+                      `Failed to start recording: ${chrome.runtime.lastError.message}`
+                    );
+                  } else if (response && response.status === "ok") {
+                    const updatedAutomations = automations.map(
+                      (automation, i) =>
+                        i === index
+                          ? { ...automation, status: "Recording", tabId }
+                          : automation
+                    );
+                    setAutomations(updatedAutomations);
+                    chrome.storage.local.set({
+                      automations: updatedAutomations,
+                    });
+                    console.log(
+                      `Recording started successfully in the new tab ${tabId}`
+                    );
+                  } else {
+                    console.error("Unexpected response:", response);
+                    alert("Unexpected response from content script");
+                  }
+                }
+              );
             }
-          );
-        }
-      };
+          };
 
-      chrome.tabs.onUpdated.addListener(listener);
+          chrome.tabs.onUpdated.addListener(listener);
+        });
+      }
     });
   };
 
