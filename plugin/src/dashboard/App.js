@@ -155,7 +155,7 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {automations.map((automation, index) => (
+          {automations?.map((automation, index) => (
             <tr key={index}>
               <td>{automation.name}</td>
               <td>{automation.url}</td>
