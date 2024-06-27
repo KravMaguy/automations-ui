@@ -16,12 +16,12 @@ function App() {
     // Listen for updates to the automations in storage
     chrome.storage.onChanged.addListener((changes, area) => {
       if (area === "local" && changes.automations) {
+        console.log("storage changed");
         setAutomations(changes.automations.newValue);
       }
     });
   }, []);
 
-  console.log("adding..");
   const addAutomation = () => {
     if (!inputValue || !urlValue) {
       alert("Please enter a name and URL for the automation");
@@ -43,8 +43,8 @@ function App() {
     setInputValue("");
     setUrlValue("");
     chrome.storage.local.set({ automations: newAutomations });
-    //print out everything in chrome storage local
   };
+
   const printStateStorage = () => {
     chrome.storage.local.get(null, function (items) {
       console.log(items);
@@ -52,10 +52,17 @@ function App() {
   };
 
   const clearStorage = () => {
-    chrome.storage.local.set({}, function () {});
-    setInputValue("");
-    setUrlValue("");
-    setAutomations([]);
+    console.log("clearing storage sdfsd");
+    printStateStorage();
+    chrome.storage.local.remove(
+      ["automations", "formInputActions", "isRecording"],
+      function () {
+        var error = chrome.runtime.lastError;
+        if (error) {
+          console.error(error);
+        }
+      }
+    );
   };
 
   const removeAutomation = (index) => {
@@ -74,13 +81,10 @@ function App() {
     const automationToRecord = automations[index];
     chrome.tabs.create({ url: automationToRecord.url }, (newTab) => {
       const listener = (tabId, changeInfo, tab) => {
-        console.log("111111111");
-
         console.log({ newTab });
         console.log({ tabId });
         console.log({ changeInfo });
         console.log({ tab });
-        console.log("$$$$$$$$$$");
         if (tabId === newTab.id && changeInfo.status === "complete") {
           chrome.tabs.onUpdated.removeListener(listener);
 
@@ -107,7 +111,9 @@ function App() {
                 );
                 setAutomations(updatedAutomations);
                 chrome.storage.local.set({ automations: updatedAutomations });
-                console.log("Recording started successfully in the new tab");
+                console.log(
+                  `Recording started successfully in the new tab ${tabId}`
+                );
               } else {
                 console.error("Unexpected response:", response);
                 alert("Unexpected response from content script");
@@ -138,7 +144,6 @@ function App() {
       />
       <button onClick={addAutomation}>Add Automation</button>
       <button onClick={printStateStorage}>Print State</button>
-      {/* add clearstorage button */}
       <button onClick={clearStorage}>Clear Storage</button>
       <table>
         <thead>
