@@ -2,10 +2,18 @@ import React, { useState, useEffect } from "react";
 
 function Popup() {
   const [isRecording, setIsRecording] = useState(false);
+  const [isAutomationPage, setIsAutomationPage] = useState(false);
 
   useEffect(() => {
     chrome.storage.local.get("isRecording", (data) => {
       setIsRecording(data.isRecording || false);
+    });
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const url = tabs[0].url;
+      // Update this condition to match your automation page URL pattern
+      const automationPagePattern = "chrome-extension://";
+      setIsAutomationPage(url.includes(automationPagePattern));
     });
   }, []);
 
@@ -51,7 +59,7 @@ function Popup() {
 
   return (
     <div>
-      {isRecording && (
+      {isRecording && !isAutomationPage && (
         <button onClick={handleStopRecording}>Stop Recording</button>
       )}
       <button onClick={openDashboard}>Open Dashboard</button>
