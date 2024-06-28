@@ -3,13 +3,24 @@ import React, { useState, useEffect } from "react";
 function App() {
   const [automations, setAutomations] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [urlValue, setUrlValue] = useState("");
+  const [urlValue, setUrlValue] = useState("https://www.");
+  const [usedNames, setUsedNames] = useState({});
+
+  useEffect(() => {
+    console.log("usedNames", { usedNames });
+  }, [usedNames]);
 
   useEffect(() => {
     // Load the automations from storage
     chrome.storage.local.get("automations", (data) => {
+      console.log("onMount");
       if (data.automations) {
         setAutomations(data.automations);
+        const names = {};
+        data.automations.forEach((automation) => {
+          names[automation.name] = true;
+        });
+        setUsedNames({ names });
       }
     });
 
@@ -41,7 +52,7 @@ function App() {
     ];
     setAutomations(newAutomations);
     setInputValue("");
-    setUrlValue("");
+    setUrlValue("https://www.");
     chrome.storage.local.set({ automations: newAutomations });
   };
 
@@ -49,22 +60,6 @@ function App() {
     chrome.storage.local.get(null, function (items) {
       console.log(items);
     });
-  };
-
-  const clearStorage = () => {
-    chrome.storage.local.remove(
-      ["automations", "formInputActions", "isRecording"],
-      function () {
-        var error = chrome.runtime.lastError;
-        if (error) {
-          console.error(error);
-        } else {
-          //clear input fields
-          setInputValue("");
-          setUrlValue("");
-        }
-      }
-    );
   };
 
   const removeAutomation = (index) => {
@@ -155,7 +150,6 @@ function App() {
       />
       <button onClick={addAutomation}>Add Automation</button>
       <button onClick={printStateStorage}>Print State</button>
-      <button onClick={clearStorage}>Clear Storage</button>
       <table>
         <thead>
           <tr>
