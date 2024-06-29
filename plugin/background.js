@@ -39,7 +39,6 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
     if (automationIndex !== -1) {
       automations[automationIndex].status = null;
       chrome.storage.local.set({ automations });
-      chrome.runtime.sendMessage({ action: "stopRecording" });
       chrome.storage.local.set({ isRecording: false });
     }
   });
