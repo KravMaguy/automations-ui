@@ -48,18 +48,12 @@ function App() {
 
     const newAutomations = [
       ...automations,
-      { name: inputValue, url: urlValue, status: null },
+      { name: inputValue, url: urlValue, status: null, tabIds: [] },
     ];
     setAutomations(newAutomations);
     setInputValue("");
     setUrlValue("https://www.");
     chrome.storage.local.set({ automations: newAutomations });
-  };
-
-  const printStateStorage = () => {
-    chrome.storage.local.get(null, function (items) {
-      console.log(items);
-    });
   };
 
   const removeAutomation = (index) => {
@@ -82,18 +76,14 @@ function App() {
         const automationToRecord = automations[index];
         chrome.tabs.create({ url: automationToRecord.url }, (newTab) => {
           const listener = (tabId, changeInfo, tab) => {
-            console.log({ newTab });
-            console.log({ tabId });
-            console.log({ changeInfo });
-            console.log({ tab });
             if (tabId === newTab.id && changeInfo.status === "complete") {
               chrome.tabs.onUpdated.removeListener(listener);
-              console.log(4);
               chrome.tabs.sendMessage(
                 newTab.id,
                 {
                   action: "startRecording",
                   automationName: automationToRecord.name,
+                  tabId: newTab.id,
                 },
                 (response) => {
                   if (chrome.runtime.lastError) {
@@ -108,7 +98,11 @@ function App() {
                     const updatedAutomations = automations.map(
                       (automation, i) =>
                         i === index
-                          ? { ...automation, status: "Recording", tabId }
+                          ? {
+                              ...automation,
+                              status: "Recording",
+                              tabIds: [...automation.tabIds, newTab.id],
+                            }
                           : automation
                     );
                     setAutomations(updatedAutomations);
@@ -116,7 +110,7 @@ function App() {
                       automations: updatedAutomations,
                     });
                     console.log(
-                      `Recording started successfully in the new tab ${tabId}`
+                      `Recording started successfully in the new tab ${newTab.id}`
                     );
                   } else {
                     console.error("Unexpected response:", response);
@@ -130,6 +124,12 @@ function App() {
           chrome.tabs.onUpdated.addListener(listener);
         });
       }
+    });
+  };
+
+  const printStateStorage = () => {
+    chrome.storage.local.get(null, function (items) {
+      console.log(items);
     });
   };
 

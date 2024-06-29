@@ -1,22 +1,25 @@
 let isRecording = false;
 let formInputActions = [];
+let currentTabId = null;
 
-chrome.storage.local.get(["formInputActions", "isRecording"], (result) => {
-  formInputActions = result.formInputActions || [];
-  isRecording = result.isRecording || false;
-});
+chrome.storage.local.get(
+  ["formInputActions", "isRecording", "currentTabId"],
+  (result) => {
+    formInputActions = result.formInputActions || [];
+    isRecording = result.isRecording || false;
+    currentTabId = result.currentTabId || null;
+  }
+);
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "startRecording") {
     isRecording = true;
-    chrome.storage.local.set({ isRecording });
-    console.log(2);
-    chrome.runtime.sendMessage({ action: "startRecording" });
+    currentTabId = request.tabId;
+    chrome.storage.local.set({ isRecording, currentTabId });
     sendResponse({ status: "ok" });
   } else if (request.action === "stopRecording") {
     isRecording = false;
-    chrome.storage.local.set({ isRecording }, () => {
-      console.log(3);
+    chrome.storage.local.set({ isRecording, currentTabId: null }, () => {
       chrome.runtime.sendMessage({ action: "stopRecording" });
       chrome.runtime.sendMessage({
         action: "saveRecording",
@@ -24,32 +27,25 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       });
       sendResponse({ status: "ok" });
     });
-  } else if (request.action === "restoreRecording") {
-    // isRecording = true;
-    // chrome.storage.local.get("formInputActions", (result) => {
-    //   formInputActions = result.formInputActions || [];
-    //   sendResponse({ status: "ok" });
-    // });
   }
   return true; // response will be sent asynchronously
-  //e.g. setter and getter actions on chrome.storagelocal is like interacting with a database
 });
 
 function handleInputChange(event) {
   if (!isRecording) return;
   const input = event.target;
-  console.log(
-    `Input changed: ${input.name || input.id || "unnamed"} = ${input.value}`
-  );
   formInputActions.push([
     `${input.name || input.id || "unnamed"}`,
     `${input.value}`,
+    currentTabId,
   ]);
   chrome.storage.local.set({ formInputActions }); // Save to storage
 }
+
 function attachEventListenersToInputs(inputElement) {
   inputElement.addEventListener("input", handleInputChange);
 }
+
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     mutation.addedNodes.forEach((node) => {
@@ -64,10 +60,12 @@ const observer = new MutationObserver((mutations) => {
     });
   });
 });
+
 observer.observe(document, {
   childList: true,
   subtree: true,
 });
+
 document
   .querySelectorAll("input, textarea, select")
   .forEach(attachEventListenersToInputs);
