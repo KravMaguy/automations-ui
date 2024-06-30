@@ -45,12 +45,18 @@ function App() {
       alert("Invalid URL. Please enter a valid URL.");
       return;
     }
+    if (usedNames?.[inputValue]) {
+      return alert(
+        "Automation name already exists. Please enter a unique name."
+      );
+    }
 
     const newAutomations = [
       ...automations,
       { name: inputValue, url: urlValue, status: null, tabIds: [] },
     ];
     setAutomations(newAutomations);
+    setUsedNames({ ...usedNames, [inputValue]: true });
     setInputValue("");
     setUrlValue("https://www.");
     chrome.storage.local.set({ automations: newAutomations });
