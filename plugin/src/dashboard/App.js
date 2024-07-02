@@ -7,10 +7,6 @@ function App() {
   const [usedNames, setUsedNames] = useState({});
 
   useEffect(() => {
-    console.log("usedNames", { usedNames });
-  }, [usedNames]);
-
-  useEffect(() => {
     // Load the automations from storage
     chrome.storage.local.get("automations", (data) => {
       console.log("onMount");
@@ -32,6 +28,11 @@ function App() {
       }
     });
   }, []);
+
+  useEffect(() => {
+    console.log("usedNames", { usedNames });
+    console.log("automations UEffect", { automations });
+  }, [usedNames, automations]);
 
   const addAutomation = () => {
     if (!inputValue || !urlValue) {
@@ -139,6 +140,37 @@ function App() {
     });
   };
 
+  const handlePlay = (event, idx) => {
+    event.preventDefault();
+    chrome.storage.local.get(["formInputActions"], function (result) {
+      if (result) {
+        const relevantActions = [];
+        for (let i = 0; i < automations[idx].tabIds.length; i++) {
+          for (let j = 0; j < result.formInputActions.length; j++) {
+            if (automations[idx].tabIds[i] === result.formInputActions[j][2]) {
+              relevantActions.push(result.formInputActions[j]);
+            }
+          }
+        }
+        console.log(relevantActions);
+        fetch("http://localhost:5000/upload", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(relevantActions),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Success:", data);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      } else console.log("no result");
+    });
+  };
+
   return (
     <div>
       <h1>Automations</h1>
@@ -170,7 +202,14 @@ function App() {
             <tr key={index}>
               <td>{automation.name}</td>
               <td>{automation.url}</td>
-              <td>{automation.status}</td>
+              {/* render a button instead of just play te  */}
+              <td>
+                {automation.tabIds.length > 0 ? (
+                  <button onClick={(e) => handlePlay(e, index)}> Play</button>
+                ) : (
+                  automation.status
+                )}
+              </td>
               <td>
                 <button
                   onClick={() => handleRecordClick(index)}
