@@ -61,6 +61,23 @@ const observer = new MutationObserver((mutations) => {
   });
 });
 
+document.addEventListener("click", function (event) {
+  if (
+    event.target.tagName === "BUTTON" ||
+    (event.target.tagName === "INPUT" && event.target.type === "submit")
+  ) {
+    const buttonType = event.target.type || "button";
+    const buttonName = event.target.name || "Unnamed";
+    const buttonInnerText =
+      event.target.innerText || event.target.value || "No Text";
+
+    console.log("Button clicked:");
+    console.log("Type:", buttonType);
+    console.log("Name:", buttonName);
+    console.log("Text:", buttonInnerText);
+  }
+});
+console.log("content.js 1");
 observer.observe(document, {
   childList: true,
   subtree: true,
