@@ -27,6 +27,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       });
       sendResponse({ status: "ok" });
     });
+  } else {
+    sendResponse({ status: "unknown action" });
   }
   return true; // response will be sent asynchronously
 });
@@ -62,22 +64,40 @@ const observer = new MutationObserver((mutations) => {
 });
 
 document.addEventListener("click", function (event) {
+  if (!isRecording) return;
   if (
     event.target.tagName === "BUTTON" ||
     (event.target.tagName === "INPUT" && event.target.type === "submit")
   ) {
+    const buttonClass = event.target.class || "No Class";
+    const buttonVal = event.target.value || "No Value";
     const buttonType = event.target.type || "button";
     const buttonName = event.target.name || "Unnamed";
     const buttonInnerText =
       event.target.innerText || event.target.value || "No Text";
 
-    console.log("Button clicked:");
-    console.log("Type:", buttonType);
-    console.log("Name:", buttonName);
-    console.log("Text:", buttonInnerText);
+    console.log("forminputactions before push", formInputActions);
+    // Extract the last Id from the last element of formInputActions
+    const lastElement = formInputActions[formInputActions.length - 1];
+    const currentTabID = lastElement
+      ? lastElement[lastElement.length - 1]
+      : undefined;
+    if (currentTabID) {
+      console.log("there is a tabId");
+      formInputActions.push([
+        buttonName,
+        buttonVal,
+        buttonType,
+        buttonInnerText,
+        currentTabID,
+      ]);
+      chrome.storage.local.set({ formInputActions }); // Save to storage
+    } else {
+      console.log("User tried to submit a form without filling any values");
+    }
   }
 });
-console.log("content.js 1");
+
 observer.observe(document, {
   childList: true,
   subtree: true,
