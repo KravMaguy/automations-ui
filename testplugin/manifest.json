@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Form Field Display",
+  "version": "1.0",
+  "description": "Displays all form field values when a button is pressed.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {}
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
