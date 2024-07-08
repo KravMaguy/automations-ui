@@ -147,7 +147,10 @@ function App() {
         const relevantActions = [];
         for (let i = 0; i < automations[idx].tabIds.length; i++) {
           for (let j = 0; j < result.formInputActions.length; j++) {
-            if (automations[idx].tabIds[i] === result.formInputActions[j][2]) {
+            if (
+              automations[idx].tabIds[i] ===
+              result.formInputActions[j][result.formInputActions[j].length - 1]
+            ) {
               relevantActions.push(result.formInputActions[j]);
             }
           }
