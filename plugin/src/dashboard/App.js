@@ -29,11 +29,6 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    console.log("usedNames", { usedNames });
-    console.log("automations UEffect", { automations });
-  }, [usedNames, automations]);
-
   const addAutomation = () => {
     if (!inputValue || !urlValue) {
       alert("Please enter a name and URL for the automation");
