@@ -1,0 +1,3 @@
+<input class="search-global-typeahead__input" placeholder="Search" role="combobox" aria-autocomplete="list" aria-label="Search" aria-activedescendant="" aria-expanded="false" type="text">
+does not register, 
+research: no name prop
